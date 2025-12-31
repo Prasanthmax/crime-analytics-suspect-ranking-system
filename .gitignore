@@ -1,0 +1,11 @@
+# Virtual environments
+.venv/
+env/
+crime/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db

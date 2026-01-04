@@ -24,3 +24,11 @@ __pycache__/
 *.pyc
 # Logs
 logs/
+
+# Environment variables
+.env
+.env.local
+
+#csv files
+*.csv
+

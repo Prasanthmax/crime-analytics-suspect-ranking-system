@@ -12,5 +12,15 @@ Thumbs.db
 # Python cache
 __pycache__/
 *.pyc
+# Data
+data/
 
-.csv
+# Jupyter
+notebooks/
+.ipynb_checkpoints/
+
+# Python cache
+__pycache__/
+*.pyc
+# Logs
+logs/

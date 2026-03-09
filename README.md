@@ -2,10 +2,6 @@
 
 A machine learning–based system to analyze crime data, identify similar cases, and assist investigations through similarity ranking and analytics.
 
-# Crime Analytics and Suspect Ranking System
-
-A machine learning–based system to analyze crime data, identify similar cases, and assist investigations through similarity ranking and analytics.
-
 ## Problem Statement
 
 Law enforcement agencies collect large volumes of crime data, but manually analyzing past cases to identify patterns and similarities is time-consuming and inefficient. Existing systems often focus on prediction accuracy rather than practical investigative support.

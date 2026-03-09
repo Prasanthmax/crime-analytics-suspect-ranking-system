@@ -3,25 +3,23 @@
 env/
 crime/
 
+# Python cache
+__pycache__/
+*.pyc
+
 # Jupyter
 .ipynb_checkpoints/
+
+# Data
+data/
+
+# Generated outputs
+outputs/
 
 # OS
 .DS_Store
 Thumbs.db
-# Python cache
-__pycache__/
-*.pyc
-# Data
-data/
 
-# Jupyter
-notebooks/
-.ipynb_checkpoints/
-
-# Python cache
-__pycache__/
-*.pyc
 # Logs
 logs/
 
@@ -29,6 +27,5 @@ logs/
 .env
 .env.local
 
-#csv files
+# CSV files
 *.csv
-

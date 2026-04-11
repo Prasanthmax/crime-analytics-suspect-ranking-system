@@ -516,9 +516,9 @@ with tab_analytics:
     st.subheader("📈 Crime Analytics Dashboard")
     st.caption("Comprehensive analytics across the full dataset.")
 
-    # ---------- Row 1: Monthly trend ----------
+    # ---------- Row 1: Monthly trend ----------A
     st.markdown("#### Crimes per Month")
-    monthly = df.set_index("datetime").resample("M").size().reset_index(name="Count")
+    monthly = df.set_index("datetime").resample("ME").size().reset_index(name="Count")
     monthly.columns = ["Month", "Count"]
     fig_monthly = px.area(
         monthly, x="Month", y="Count",

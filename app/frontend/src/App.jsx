@@ -8,7 +8,7 @@ import {
   BarChart, Bar, Cell, PieChart, Pie, Legend, LineChart, Line
 } from "recharts";
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 // Soft peach-red and mist-white custom chart colors
 const COLORS = [

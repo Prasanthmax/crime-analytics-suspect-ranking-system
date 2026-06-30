@@ -31,9 +31,23 @@ class SimilarityEngine:
         if base_idx is None:
             return pd.DataFrame()
 
+        # Compute similarities
         sims = cosine_similarity(self.tfidf[base_idx], self.tfidf)[0]
-        result = self.df.copy()
-        result["similarity"] = sims
+
+        # Optimize: Instead of copying the full 1M row DataFrame, find the top candidates first.
+        # We take a slightly larger pool (e.g., top_k * 10 or at least 200) to account for city/weapon filtering.
+        pool_size = max(200, top_k * 10)
+        if pool_size >= len(sims):
+            top_indices = np.arange(len(sims))
+        else:
+            # Get partition of top indices
+            top_indices = np.argpartition(sims, -pool_size)[-pool_size:]
+            # Sort them in descending order of similarity
+            top_indices = top_indices[np.argsort(-sims[top_indices])]
+
+        # Extract only the top candidates from df
+        result = self.df.iloc[top_indices].copy()
+        result["similarity"] = sims[top_indices]
 
         # remove the base case itself
         result = result[result["dr_no"] != case_id]

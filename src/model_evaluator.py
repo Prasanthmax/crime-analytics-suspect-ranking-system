@@ -18,11 +18,27 @@ class ModelEvaluator:
         """
         self.df = df
         self.relevance_func = relevance_func
-    
+        self._cache = {}
+
+    def _get_results(self, predict_func_or_engine, case_id, k):
+        cache_key = (id(predict_func_or_engine), case_id, k)
+        if cache_key in self._cache:
+            return self._cache[cache_key]
+
+        if callable(predict_func_or_engine):
+            res = predict_func_or_engine(case_id, k)
+        elif hasattr(predict_func_or_engine, "get_similar_cases"):
+            res = predict_func_or_engine.get_similar_cases(case_id, top_k=k)
+        else:
+            raise TypeError("Expected a callable predict function or an engine object with get_similar_cases.")
+            
+        self._cache[cache_key] = res
+        return res
+
     def precision_at_k(self, engine, case_id, k=10):
         """Calculate Precision@K"""
         base = self.df[self.df["dr_no"] == case_id].iloc[0]
-        retrieved = engine.get_similar_cases(case_id, top_k=k)
+        retrieved = self._get_results(engine, case_id, k)
         
         if retrieved.empty:
             return 0.0
@@ -41,7 +57,7 @@ class ModelEvaluator:
         and estimate based on retrieved results.
         """
         base = self.df[self.df["dr_no"] == case_id].iloc[0]
-        retrieved = engine.get_similar_cases(case_id, top_k=k)
+        retrieved = self._get_results(engine, case_id, k)
         
         if retrieved.empty:
             return 0.0
@@ -75,7 +91,7 @@ class ModelEvaluator:
     def ndcg_at_k(self, engine, case_id, k=10):
         """Calculate NDCG@K"""
         base = self.df[self.df["dr_no"] == case_id].iloc[0]
-        retrieved = engine.get_similar_cases(case_id, top_k=k)
+        retrieved = self._get_results(engine, case_id, k)
         
         if retrieved.empty:
             return 0.0
@@ -97,7 +113,7 @@ class ModelEvaluator:
         
         for case_id in case_ids:
             base = self.df[self.df["dr_no"] == case_id].iloc[0]
-            retrieved = engine.get_similar_cases(case_id, top_k=k)
+            retrieved = self._get_results(engine, case_id, k)
             
             if retrieved.empty:
                 aps.append(0.0)

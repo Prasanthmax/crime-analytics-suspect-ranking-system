@@ -9,6 +9,8 @@ import sys
 # Add project root to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
+import urllib.request
+
 from src.similarity_engine import SimilarityEngine
 from src.suspect_ranker import SuspectRanker
 from src.model_evaluator import ModelEvaluator, is_relevant
@@ -35,9 +37,26 @@ suspect_ranker = None
 @app.on_event("startup")
 def startup_event():
     global df, similarity_engine, suspect_ranker
-    if not os.path.exists(DATA_PATH):
-        raise FileNotFoundError(f"Clean cases CSV not found at {DATA_PATH}. Please run preprocessing first.")
     
+    # Check if directory exists
+    os.makedirs(os.path.dirname(DATA_PATH), exist_ok=True)
+    
+    if not os.path.exists(DATA_PATH):
+        print("[SERVER] Clean cases CSV not found locally. Checking for remote DATA_URL...")
+        data_url = os.getenv("DATA_URL")
+        if not data_url:
+            raise FileNotFoundError(
+                f"Dataset not found at {DATA_PATH} and 'DATA_URL' environment variable is not set. "
+                "Please upload clean_cases.csv to a public cloud storage (Google Drive direct link, Dropbox, "
+                "or GitHub Release) and configure the 'DATA_URL' environment variable on Render."
+            )
+        try:
+            print(f"[SERVER] Downloading dataset from {data_url}...")
+            urllib.request.urlretrieve(data_url, DATA_PATH)
+            print("[SERVER] Download complete.")
+        except Exception as e:
+            raise RuntimeError(f"Failed to download dataset from {data_url}: {e}")
+            
     print("[SERVER] Loading dataset...")
     df = pd.read_csv(DATA_PATH)
     df["datetime"] = pd.to_datetime(df["datetime"])

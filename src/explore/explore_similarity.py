@@ -26,10 +26,10 @@ plt.rcParams["figure.figsize"] = (10, 6)
 # We load the dataset preprocessed from raw LA crime data.
 
 # %%
-data_path = "../../data/processed/clean_cases.csv"
+data_path = "../../data/processed/clean_cases.csv.gz"
 if not os.path.exists(data_path):
     # Try alternate path just in case
-    data_path = "../data/processed/clean_cases.csv"
+    data_path = "../data/processed/clean_cases.csv.gz"
 
 df = pd.read_csv(data_path)
 df["datetime"] = pd.to_datetime(df["datetime"])

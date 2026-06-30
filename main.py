@@ -6,10 +6,10 @@ import pandas as pd
 def run():
     preprocess_cases(
         "./data/raw/la_crime.csv",
-        "./data/processed/clean_cases.csv"
+        "./data/processed/clean_cases.csv.gz"
     )
 
-    df = pd.read_csv("./data/processed/clean_cases.csv")
+    df = pd.read_csv("./data/processed/clean_cases.csv.gz")
     df["datetime"] = pd.to_datetime(df["datetime"])
 
     engine = SimilarityEngine(df)

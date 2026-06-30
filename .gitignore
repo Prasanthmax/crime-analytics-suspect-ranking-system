@@ -12,6 +12,7 @@ __pycache__/
 
 # Data
 data/
+!data/processed/clean_cases.csv.gz
 
 # Generated outputs
 outputs/

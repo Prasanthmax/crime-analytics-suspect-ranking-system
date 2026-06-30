@@ -16,7 +16,7 @@ def run_evaluation():
     print("=" * 60)
     
     # 1. Load Data
-    data_path = "./data/processed/clean_cases.csv"
+    data_path = "./data/processed/clean_cases.csv.gz"
     if not os.path.exists(data_path):
         print(f"Error: {data_path} not found. Please run preprocessing first.")
         return

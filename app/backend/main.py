@@ -26,7 +26,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../data/processed/clean_cases.csv"))
+DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../data/processed/clean_cases.csv.gz"))
 MODEL_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../models/ensemble_ranker.joblib"))
 
 # Load dataset and engines once on startup

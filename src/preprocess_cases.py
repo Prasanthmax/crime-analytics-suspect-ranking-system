@@ -62,4 +62,9 @@ def preprocess_cases(input_path: str, output_path: str) -> None:
     df = build_datetime(df)
     df = create_mo_text(df)
     df = clean_cases(df)
+    
+    # Sort and keep the most recent 100,000 cases to stay within Render's 512MB RAM limit.
+    # This keeps analytics current and reduces memory footprint by 90%.
+    df = df.sort_values("datetime", ascending=False).head(100000).reset_index(drop=True)
+    
     df.to_csv(output_path, index=False)

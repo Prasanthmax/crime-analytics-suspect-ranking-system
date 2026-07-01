@@ -369,7 +369,14 @@ def train_model():
 # ── Serve React frontend (must be LAST — after all API routes) ────────────────
 import pathlib
 from fastapi.staticfiles import StaticFiles
-
+import pathlib
+_frontend = pathlib.Path(__file__).parent.parent.parent / "frontend_dist"
+print(f"[Frontend] Looking for frontend_dist at: {_frontend}")
+print(f"[Frontend] Exists: {_frontend.is_dir()}")
+if _frontend.is_dir():
+    app.mount("/", StaticFiles(directory=str(_frontend), html=True), name="frontend")
+else:
+    print("[Frontend] frontend_dist directory NOT found — frontend will not be served")
 _frontend = pathlib.Path(__file__).parent.parent.parent / "frontend_dist"
 if _frontend.is_dir():
     app.mount("/", StaticFiles(directory=str(_frontend), html=True), name="frontend")

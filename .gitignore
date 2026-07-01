@@ -10,10 +10,6 @@ __pycache__/
 # Jupyter
 .ipynb_checkpoints/
 
-# Data
-data/
-!data/processed/clean_cases.csv.gz
-
 # Generated outputs
 outputs/
 

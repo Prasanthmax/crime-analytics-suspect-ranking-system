@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { 
-  Shield, Search, Brain, BarChart3, Users, Clock, MapPin, 
+import {
+  Shield, Search, Brain, BarChart3, Users, Clock, MapPin,
   Flame, Award, RefreshCw, ChevronRight, CheckCircle2, XCircle, Info
 } from "lucide-react";
-import { 
+import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, Cell, PieChart, Pie, Legend, LineChart, Line
 } from "recharts";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
 
 // Soft peach-red and mist-white custom chart colors
 const COLORS = [
@@ -18,11 +18,11 @@ const COLORS = [
 
 function App() {
   const [activeTab, setActiveTab] = useState("overview");
-  
+
   // Data states
   const [metrics, setMetrics] = useState(null);
   const [analytics, setAnalytics] = useState(null);
-  
+
   // Search state
   const [searchId, setSearchId] = useState("");
   const [searchSuggestions, setSearchSuggestions] = useState([]);
@@ -211,45 +211,41 @@ function App() {
               <p className="text-xs text-text-muted">Ensemble Learning Modus Operandi Matching System</p>
             </div>
           </div>
-          
+
           <nav className="flex space-x-1">
-            <button 
+            <button
               onClick={() => setActiveTab("overview")}
-              className={`px-4 py-2 text-sm font-semibold rounded-md transition-material ${
-                activeTab === "overview" 
-                  ? "bg-primary-light text-primary" 
+              className={`px-4 py-2 text-sm font-semibold rounded-md transition-material ${activeTab === "overview"
+                  ? "bg-primary-light text-primary"
                   : "text-text-secondary hover:bg-mist-dark"
-              }`}
+                }`}
             >
               Overview
             </button>
-            <button 
+            <button
               onClick={() => setActiveTab("similarity")}
-              className={`px-4 py-2 text-sm font-semibold rounded-md transition-material ${
-                activeTab === "similarity" 
-                  ? "bg-primary-light text-primary" 
+              className={`px-4 py-2 text-sm font-semibold rounded-md transition-material ${activeTab === "similarity"
+                  ? "bg-primary-light text-primary"
                   : "text-text-secondary hover:bg-mist-dark"
-              }`}
+                }`}
             >
               Similar Cases
             </button>
-            <button 
+            <button
               onClick={() => setActiveTab("ranking")}
-              className={`px-4 py-2 text-sm font-semibold rounded-md transition-material ${
-                activeTab === "ranking" 
-                  ? "bg-primary-light text-primary" 
+              className={`px-4 py-2 text-sm font-semibold rounded-md transition-material ${activeTab === "ranking"
+                  ? "bg-primary-light text-primary"
                   : "text-text-secondary hover:bg-mist-dark"
-              }`}
+                }`}
             >
               Suspect Ranking
             </button>
-            <button 
+            <button
               onClick={() => setActiveTab("analytics")}
-              className={`px-4 py-2 text-sm font-semibold rounded-md transition-material ${
-                activeTab === "analytics" 
-                  ? "bg-primary-light text-primary" 
+              className={`px-4 py-2 text-sm font-semibold rounded-md transition-material ${activeTab === "analytics"
+                  ? "bg-primary-light text-primary"
                   : "text-text-secondary hover:bg-mist-dark"
-              }`}
+                }`}
             >
               Analytics
             </button>
@@ -259,7 +255,7 @@ function App() {
 
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto p-6 space-y-6">
-        
+
         {/* TAB 1: OVERVIEW */}
         {activeTab === "overview" && (
           <div className="space-y-6">
@@ -274,7 +270,7 @@ function App() {
                   <h2 className="text-3xl font-extrabold text-text-primary">{metrics.summary.total_cases.toLocaleString()}</h2>
                   <p className="text-xs text-text-muted mt-1">Processed crimes in database</p>
                 </div>
-                
+
                 <div className="bg-surface p-6 rounded-xl border border-border elevation-1 hover:elevation-2 transition-material">
                   <div className="flex justify-between items-start text-text-muted mb-2">
                     <span className="text-sm font-medium uppercase tracking-wider">Distinct Areas</span>
@@ -540,7 +536,7 @@ function App() {
             {/* Search Results */}
             {searchResults.length > 0 && (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
+
                 {/* Data Table */}
                 <div className="bg-surface rounded-xl border border-border elevation-1 overflow-hidden lg:col-span-2 flex flex-col">
                   <div className="p-6 border-b border-border">
@@ -560,14 +556,13 @@ function App() {
                       </thead>
                       <tbody className="divide-y divide-border text-sm">
                         {searchResults.map((row) => (
-                          <tr 
-                            key={row.dr_no} 
+                          <tr
+                            key={row.dr_no}
                             onClick={() => setSelectedSearchCase(row)}
-                            className={`cursor-pointer transition-material ${
-                              selectedSearchCase?.dr_no === row.dr_no 
-                                ? "bg-primary-light" 
+                            className={`cursor-pointer transition-material ${selectedSearchCase?.dr_no === row.dr_no
+                                ? "bg-primary-light"
                                 : "hover:bg-mist"
-                            }`}
+                              }`}
                           >
                             <td className="p-4 font-mono font-bold text-text-primary">{row.dr_no}</td>
                             <td className="p-4">{row.area_name}</td>
@@ -848,7 +843,7 @@ function App() {
             {/* Suspect Rankings list */}
             {rankingResults.length > 0 && (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
+
                 {/* Ranked Data Table */}
                 <div className="bg-surface rounded-xl border border-border elevation-1 overflow-hidden lg:col-span-2 flex flex-col">
                   <div className="p-6 border-b border-border">
@@ -869,14 +864,13 @@ function App() {
                       </thead>
                       <tbody className="divide-y divide-border text-sm">
                         {rankingResults.map((row, index) => (
-                          <tr 
-                            key={row.dr_no} 
+                          <tr
+                            key={row.dr_no}
                             onClick={() => setSelectedRankCase(row)}
-                            className={`cursor-pointer transition-material ${
-                              selectedRankCase?.dr_no === row.dr_no 
-                                ? "bg-primary-light" 
+                            className={`cursor-pointer transition-material ${selectedRankCase?.dr_no === row.dr_no
+                                ? "bg-primary-light"
                                 : "hover:bg-mist"
-                            }`}
+                              }`}
                           >
                             <td className="p-4 font-bold text-text-secondary">#{index + 1}</td>
                             <td className="p-4 font-mono font-bold text-text-primary">{row.dr_no}</td>
@@ -921,7 +915,7 @@ function App() {
                         {/* Feature Match checklist */}
                         <div className="space-y-2.5">
                           <span className="text-xs text-text-muted font-bold uppercase tracking-wider block">Decision Feature Signals:</span>
-                          
+
                           <div className="flex items-center justify-between py-1 border-b border-mist-dark">
                             <span className="text-text-secondary">Text Modus Operandi Cosine Sim</span>
                             <span className="font-bold text-text-primary font-mono">{selectedRankCase.similarity.toFixed(4)}</span>
@@ -1020,7 +1014,7 @@ function App() {
           <div className="space-y-6">
             {analytics ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
+
                 {/* 1. Monthly Trend Area Chart */}
                 <div className="bg-surface p-6 rounded-xl border border-border elevation-1 md:col-span-2">
                   <h3 className="text-base font-bold mb-4 text-text-primary uppercase tracking-wider flex items-center space-x-2">
@@ -1032,8 +1026,8 @@ function App() {
                       <AreaChart data={analytics.monthly_trend}>
                         <defs>
                           <linearGradient id="peachGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#FA5252" stopOpacity={0.4}/>
-                            <stop offset="95%" stopColor="#FA5252" stopOpacity={0}/>
+                            <stop offset="5%" stopColor="#FA5252" stopOpacity={0.4} />
+                            <stop offset="95%" stopColor="#FA5252" stopOpacity={0} />
                           </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E9ECEF" />
@@ -1150,8 +1144,8 @@ function App() {
                       <AreaChart data={analytics.hour_of_day}>
                         <defs>
                           <linearGradient id="hourGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#FA5252" stopOpacity={0.4}/>
-                            <stop offset="95%" stopColor="#FA5252" stopOpacity={0}/>
+                            <stop offset="5%" stopColor="#FA5252" stopOpacity={0.4} />
+                            <stop offset="95%" stopColor="#FA5252" stopOpacity={0} />
                           </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E9ECEF" />
@@ -1176,15 +1170,15 @@ function App() {
                         <Tooltip />
                         <Legend />
                         {/* Dynamically draw lines for years present in data */}
-                        {analytics.yoy_trend.length > 0 && 
+                        {analytics.yoy_trend.length > 0 &&
                           Object.keys(analytics.yoy_trend[0])
                             .filter(key => key !== "month")
                             .map((year, idx) => (
-                              <Line 
-                                key={year} 
-                                type="monotone" 
-                                dataKey={year} 
-                                stroke={COLORS[idx % COLORS.length]} 
+                              <Line
+                                key={year}
+                                type="monotone"
+                                dataKey={year}
+                                stroke={COLORS[idx % COLORS.length]}
                                 strokeWidth={2}
                                 dot={{ r: 4 }}
                                 activeDot={{ r: 6 }}

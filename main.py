@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 # ── Path setup ────────────────────────────────────────────────────────────────
-# Works for both local dev (app/backend/main.py) and Docker (/app/app/backend/main.py)
+# __file__ = /app/app/backend/main.py in Docker, so .parent x3 = /app = ROOT
 ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT))
 
@@ -43,7 +43,10 @@ suspect_ranker: SuspectRanker | None = None
 def startup_event():
     global df, similarity_engine, suspect_ranker
 
-    # Download dataset if missing (fallback for Render/local without data)
+    print(f"[SERVER] ROOT resolved to: {ROOT}")
+    print(f"[SERVER] DATA_PATH: {DATA_PATH} — exists: {DATA_PATH.exists()}")
+    print(f"[SERVER] MODEL_PATH: {MODEL_PATH} — exists: {MODEL_PATH.exists()}")
+
     if not DATA_PATH.exists():
         data_url = os.getenv("DATA_URL")
         if not data_url:
@@ -61,7 +64,7 @@ def startup_event():
     df["datetime"] = pd.to_datetime(df["datetime"])
     print(f"[SERVER] Dataset loaded: {len(df):,} rows.")
 
-    similarity_engine = SimilarityEngine(df)
+    similarity_engine = SimilarityEngine(df, models_dir=str(ROOT / "models"))
     suspect_ranker = SuspectRanker(df, model_path=str(MODEL_PATH))
     suspect_ranker.load_model()
 
@@ -114,6 +117,8 @@ def get_metrics():
     }
 
 
+# NOTE: /search/lookup MUST come before /{case_id} — otherwise FastAPI
+# matches "search" as case_id and returns a 422 Unprocessable Entity.
 @app.get("/api/cases/search/lookup")
 def search_cases(q: str = ""):
     if not q:
@@ -236,7 +241,7 @@ def get_analytics():
     sex_breakdown = df["vict_sex"].fillna("Unknown").value_counts().reset_index()
     sex_breakdown.columns = ["name", "count"]
 
-    day_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    day_order = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
     dow_counts = df["datetime"].dt.day_name().value_counts().reindex(day_order, fill_value=0).reset_index()
     dow_counts.columns = ["name", "count"]
 
@@ -276,9 +281,9 @@ def train_model():
     try:
         model_dict = suspect_ranker.train_model(num_samples=1000)
 
-        features        = model_dict["feature_names"]
-        rf_importances  = model_dict["rf"].feature_importances_.tolist()
-        gb_importances  = model_dict["gb"].feature_importances_.tolist()
+        features       = model_dict["feature_names"]
+        rf_importances = model_dict["rf"].feature_importances_.tolist()
+        gb_importances = model_dict["gb"].feature_importances_.tolist()
         importances = sorted(
             [
                 {"feature": f, "rf": rf, "gb": gb, "avg": (rf + gb) / 2.0}
@@ -322,11 +327,12 @@ def train_model():
 
 
 # ── Serve React frontend ──────────────────────────────────────────────────────
-# Must be LAST — after all API routes.
-# Uses FRONTEND_DIST env var (set in Dockerfile) with fallback to relative path.
+# MUST be last — after all API routes or it shadows them.
+# Dockerfile sets FRONTEND_DIST=/app/frontend_dist (absolute, no guessing).
 _frontend = pathlib.Path(os.environ.get("FRONTEND_DIST", str(ROOT / "frontend_dist")))
-print(f"[Frontend] Looking for frontend at: {_frontend} — exists: {_frontend.is_dir()}")
+print(f"[Frontend] Path: {_frontend} — exists: {_frontend.is_dir()}")
 if _frontend.is_dir():
     app.mount("/", StaticFiles(directory=str(_frontend), html=True), name="frontend")
+    print("[Frontend] Mounted OK.")
 else:
-    print("[Frontend] NOT FOUND — API-only mode (frontend not served)")
+    print("[Frontend] NOT FOUND — running API-only mode.")

@@ -1,3 +1,12 @@
+---
+title: Crime Analytics Suspect Ranking System
+emoji: 🔍
+colorFrom: red
+colorTo: gray
+sdk: docker
+app_port: 7860
+pinned: false
+---
 # Crime Analytics and Suspect Ranking System
 
 A modern machine learning–based decision-support system to analyze crime data, identify similar cases based on Modus Operandi (MO), and rank likely suspect replication patterns. 

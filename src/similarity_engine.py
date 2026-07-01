@@ -1,20 +1,44 @@
+import os
 import numpy as np
 import pandas as pd
+import scipy.sparse as sp
+import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+
+_DEFAULT_MODELS_DIR = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "../models")
+)
 
 
 class SimilarityEngine:
     """
     Text-based similarity on mo_text with optional city/weapon filters.
+    Loads pre-saved TF-IDF artifacts from models/ if available,
+    otherwise builds from scratch (slow on large datasets).
     """
 
-    def __init__(self, df: pd.DataFrame):
+    def __init__(self, df: pd.DataFrame, models_dir: str = _DEFAULT_MODELS_DIR):
         self.df = df.reset_index(drop=True).copy()
         self.df["mo_text"] = self.df["mo_text"].fillna("").astype(str)
 
-        self.vectorizer = TfidfVectorizer(stop_words="english")
-        self.tfidf = self.vectorizer.fit_transform(self.df["mo_text"])
+        vec_path = os.path.join(models_dir, "tfidf_vectorizer.joblib")
+        mat_path = os.path.join(models_dir, "tfidf_matrix.npz")
+
+        if os.path.exists(vec_path) and os.path.exists(mat_path):
+            print("[SimilarityEngine] Loading pre-saved TF-IDF artifacts...")
+            self.vectorizer = joblib.load(vec_path)
+            self.tfidf = sp.load_npz(mat_path)
+            print("[SimilarityEngine] TF-IDF loaded.")
+        else:
+            print("[SimilarityEngine] No saved artifacts found — building TF-IDF (slow)...")
+            self.vectorizer = TfidfVectorizer(stop_words="english")
+            self.tfidf = self.vectorizer.fit_transform(self.df["mo_text"])
+            # Auto-save for next startup
+            os.makedirs(models_dir, exist_ok=True)
+            joblib.dump(self.vectorizer, vec_path)
+            sp.save_npz(mat_path, self.tfidf)
+            print("[SimilarityEngine] TF-IDF saved to models/ for future startups.")
 
     def _idx_for_case(self, case_id):
         idx_list = self.df.index[self.df["dr_no"] == case_id].tolist()
